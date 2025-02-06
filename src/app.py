@@ -10,16 +10,16 @@ from datetime import datetime
 
 
 # Load the model and encoders
-model_file = '../models/car_price_prediction_model_RandomForestRegressor.pkl'
-category_encoder_file = '../models/category_encoder.pkl'
-color_encoder_file = '../models/color_encoder.pkl'
-fuel_encoder_file = '../models/fuel_encoder.pkl'
-doors_encoder_file = '../models/doors_encoder.pkl'
-drive_encoder_file = '../models/drive_encoder.pkl'
-gear_encoder_file = '../models/gear_encoder.pkl'
-leather_encoder_file = '../models/leather_encoder.pkl'
-model_encoder_file = '../models/model_encoder.pkl'
-manufacturer_encoder_file = '../models/manufacturer_encoder.pkl'
+model_file = './models/car_price_prediction_model_RandomForestRegressor.pkl'
+category_encoder_file = './models/category_encoder.pkl'
+color_encoder_file = './models/color_encoder.pkl'
+fuel_encoder_file = './models/fuel_encoder.pkl'
+doors_encoder_file = './models/doors_encoder.pkl'
+drive_encoder_file = './models/drive_encoder.pkl'
+gear_encoder_file = './models/gear_encoder.pkl'
+leather_encoder_file = './models/leather_encoder.pkl'
+model_encoder_file = './models/model_encoder.pkl'
+manufacturer_encoder_file = './models/manufacturer_encoder.pkl'
 
 # Load pickled objects
 def load_pickle(file_path):
