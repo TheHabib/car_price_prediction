@@ -8,16 +8,18 @@ import os
 # Streamlit UI
 st.set_page_config(page_title="Car Price Prediction", page_icon="🚗", initial_sidebar_state="collapsed")
 
-# Define custom CSS for background color and text color
+
+background_image_url = 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjthIyeHvmjXTv-c-fgLwC77CpJtXoCnIL2I6btSJhkLiIhwjWxmKkpGCGNF76qJtSpeovxD64Vk2chdjBOgK1Wneq0lhAEB6DxB5YjHsa5aGQOoQfm4ygQ0cNTEh9t1SWrrzRoL2Ul-xCR/s1600-rw/CAR-WALLPAPER-1920x1080.jpg'  # Replace with the path to your image or a URL
+
+# Define custom CSS for the background
 st.markdown(
     f"""
     <style>
         .stApp {{
-            background-color: black;
-            color: white;
-        }}
-        .stMarkdown h1, h2, h3, h4, h5, h6, p {{
-            color: white;
+            background-image: url({background_image_url});
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
         }}
     </style>
     """, unsafe_allow_html=True
@@ -87,6 +89,7 @@ st.sidebar.header("Useful Links")
 st.sidebar.markdown("[GitHub Repository](https://github.com/TheHabib/car_price_prediction)")
 st.sidebar.markdown("[Docker Image](https://hub.docker.com/r/your_docker_image)")
 
+st.header('User Input Parameters')
 
 # First line: Select Manufacturer and Select Your Model
 col1, col2 = st.columns(2)

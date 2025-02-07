@@ -8,20 +8,8 @@ import os
 # Streamlit UI
 st.set_page_config(page_title="Car Price Prediction", page_icon="🚗", initial_sidebar_state="collapsed")
 
-# Define custom CSS for background color and text color
-st.markdown(
-    f"""
-    <style>
-        .stApp {{
-            background-color: black;
-            color: white;
-        }}
-        .stMarkdown h1, h2, h3, h4, h5, h6, p {{
-            color: white;
-        }}
-    </style>
-    """, unsafe_allow_html=True
-)
+
+
 
 
 # Load the model and encoders
@@ -36,6 +24,10 @@ leather_encoder_file = '../models/leather_encoder.pkl'
 model_encoder_file = '../models/model_encoder.pkl'
 manufacturer_encoder_file = '../models/manufacturer_encoder.pkl'
 car_models_df = pd.read_csv("../datasets/Car_Models.csv")
+
+
+
+
 
 # Load pickled objects
 def load_pickle(file_path):
@@ -52,6 +44,9 @@ gear_encoder = load_pickle(gear_encoder_file)
 leather_encoder = load_pickle(leather_encoder_file)
 model_encoder = load_pickle(model_encoder_file)
 manufacturer_encoder = load_pickle(manufacturer_encoder_file)
+
+
+
 
 # Define preprocessing functions
 def process_mileage(x):
@@ -80,59 +75,30 @@ def encode_value(encoder, value, column_name):
         return np.nan
 
 
+
 st.title('Used Car Price Prediction App')
 
 # Sidebar with links
 st.sidebar.header("Useful Links")
-st.sidebar.markdown("[GitHub Repository](https://github.com/TheHabib/car_price_prediction)")
+st.sidebar.markdown("[GitHub Repository](https://github.com/your_repo)")
 st.sidebar.markdown("[Docker Image](https://hub.docker.com/r/your_docker_image)")
 
+st.header('User Input Parameters')
 
-# First line: Select Manufacturer and Select Your Model
-col1, col2 = st.columns(2)
-with col1:
-    manufacturer_name = st.selectbox('Select Manufacturer', manufacturer_encoder.classes_)
-with col2:
-    filtered_models = car_models_df[car_models_df['Manufacturer'] == manufacturer_name]['Model'].unique()
-    model_name = st.selectbox('Select Your Model', filtered_models)
-
-# Second line: Enter Production Year
+manufacturer_name = st.selectbox('Select Manufacturer', manufacturer_encoder.classes_)
+filtered_models = car_models_df[car_models_df['Manufacturer'] == manufacturer_name]['Model'].unique()
+model_name = st.selectbox('Select Your Model', filtered_models)
 prod_year = st.number_input('Enter Production Year', max_value=2025, value=2025, step=1, format="%d")
-
-# Third line: Enter Engine Volume (in litres) and Enter Mileage (in km)
-col3, col4 = st.columns(2)
-with col3:
-    engine_volume = st.number_input('Enter Engine Volume (in litres)', min_value=0.0, format="%f")
-with col4:
-    mileage = st.number_input('Enter Mileage (in km)', min_value=0)
-
-# Fourth line: Select Fuel Type and Select Gear Box Type
-col5, col6 = st.columns(2)
-with col5:
-    fuel_type = st.selectbox('Select Fuel Type', fuel_encoder.classes_)
-with col6:
-    gear_box_type = st.selectbox('Select Gear Box Type', gear_encoder.classes_)
-
-# Fifth line: Select Vehicle Category and Select Number of Doors
-col7, col8 = st.columns(2)
-with col7:
-    category = st.selectbox('Select Vehicle Category', category_encoder.classes_)
-with col8:
-    doors_option = st.selectbox('Select Number of Doors', doors_encoder.classes_)
-
-# Sixth line: Does Your Car Have Leather Interior? and Select Car Color
-col9, col10 = st.columns(2)
-with col9:
-    leather_interior = st.selectbox('Does Your Car Have Leather Interior?', ['Yes', 'No'])
-with col10:
-    color = st.selectbox('Select Car Color', color_encoder.classes_)
-
-# Seventh line: Enter Number of Airbags and Enter Levy Amount
-col11, col12 = st.columns(2)
-with col11:
-    airbags_number = st.number_input('Enter Number of Airbags:', min_value=0, value=0)
-with col12:
-    levy = st.number_input('Enter Levy Amount', min_value=0)
+engine_volume = st.number_input('Enter Engine Volume (in litres)', min_value=0.0, format="%f")
+mileage = st.number_input('Enter Mileage (in km)', min_value=0)
+fuel_type = st.selectbox('Select Fuel Type', fuel_encoder.classes_)
+gear_box_type = st.selectbox('Select Gear Box Type', gear_encoder.classes_)
+category = st.selectbox('Select Vehicle Category', category_encoder.classes_)
+doors_option = st.selectbox('Select Number of Doors', doors_encoder.classes_)
+leather_interior = st.selectbox('Does Your Car Have Leather Interior?', ['Yes', 'No'])
+color = st.selectbox('Select Car Color', color_encoder.classes_)
+airbags_number = st.number_input('Enter Number of Airbags:', min_value=0, value=0)
+levy = st.number_input('Enter Levy Amount', min_value=0)
 
 if st.button('Predict Price'):
     input_data = pd.DataFrame({
@@ -148,7 +114,7 @@ if st.button('Predict Price'):
         'Doors': [encode_value(doors_encoder, doors_option, 'Doors')],
         'Color': [encode_value(color_encoder, color, 'Color')],
         'Airbags': [process_airbags(airbags_number)],
-        'Age': [process_age(prod_year)]
+        'Age': [process_age(prod_year)]        
     })
 
     input_data.dropna(inplace=True)
