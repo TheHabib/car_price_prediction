@@ -1,13 +1,11 @@
 import streamlit as st
 import pandas as pd
 import pickle
-import random
 import numpy as np
-from sklearn.pipeline import Pipeline
-from sklearn.compose import ColumnTransformer
-from sklearn.preprocessing import StandardScaler
 from datetime import datetime
 
+# Streamlit UI
+st.set_page_config(page_title="Car Price Prediction", page_icon="🚗")
 
 # Load the model and encoders
 model_file = './models/car_price_prediction_model_RandomForestRegressor.pkl'
@@ -37,6 +35,23 @@ leather_encoder = load_pickle(leather_encoder_file)
 model_encoder = load_pickle(model_encoder_file)
 manufacturer_encoder = load_pickle(manufacturer_encoder_file)
 
+# Load Car Models dataset
+car_models_df = pd.read_csv("./datasets/Car_Models.csv")
+
+# Set background image
+def set_background():
+    page_bg = f"""
+    <style>
+    body {{
+        background-image: url('./resources/background.jpg');
+        background-size: cover;
+    }}
+    </style>
+    """
+    st.markdown(page_bg, unsafe_allow_html=True)
+
+set_background()
+
 # Define preprocessing functions
 def process_mileage(x):
     return int(x)
@@ -63,45 +78,33 @@ def encode_value(encoder, value, column_name):
         st.error(f"Invalid input: '{value}' not recognized in column '{column_name}'")
         return np.nan
 
-# Streamlit UI
-st.set_page_config(page_title="Car Price Prediction", page_icon="🚗")  # Set browser tab title
+
 
 st.title('Used Car Price Prediction App')
 
-st.sidebar.header('User Input Parameters')
+# Sidebar with links
+st.sidebar.header("Useful Links")
+st.sidebar.markdown("[GitHub Repository](https://github.com/your_repo)")
+st.sidebar.markdown("[Docker Image](https://hub.docker.com/r/your_docker_image)")
 
+st.header('User Input Parameters')
 
+manufacturer_name = st.selectbox('Select Manufacturer', manufacturer_encoder.classes_)
+filtered_models = car_models_df[car_models_df['Manufacturer'] == manufacturer_name]['Model'].unique()
+model_name = st.selectbox('Select Your Model', filtered_models)
+prod_year = st.number_input('Enter Production Year', max_value=2025, value=2025, step=1, format="%d")
+engine_volume = st.number_input('Enter Engine Volume (in litres)', min_value=0.0, format="%f")
+mileage = st.number_input('Enter Mileage (in km)', min_value=0)
+fuel_type = st.selectbox('Select Fuel Type', fuel_encoder.classes_)
+gear_box_type = st.selectbox('Select Gear Box Type', gear_encoder.classes_)
+category = st.selectbox('Select Vehicle Category', category_encoder.classes_)
+doors_option = st.selectbox('Select Number of Doors', doors_encoder.classes_)
+leather_interior = st.selectbox('Does Your Car Have Leather Interior?', ['Yes', 'No'])
+color = st.selectbox('Select Car Color', color_encoder.classes_)
+airbags_number = st.number_input('Enter Number of Airbags:', min_value=0, value=0)
+levy = st.number_input('Enter Levy Amount', min_value=0)
 
-
-
-manufacturer_name = st.sidebar.selectbox('Select Manufacturer', manufacturer_encoder.classes_)
-model_name = st.sidebar.selectbox('Select Your Model', model_encoder.classes_)
-prod_year = st.sidebar.number_input('Enter Production Year', max_value=2025, value=2025, step=1, format="%d")
-engine_volume = st.sidebar.number_input('Enter Engine Volume (in litres)', min_value=0.0, format="%f")
-mileage = st.sidebar.number_input('Enter Mileage (in km)', min_value=0)
-fuel_type = st.sidebar.selectbox('Select Fuel Type', fuel_encoder.classes_)
-gear_box_type = st.sidebar.selectbox('Select Gear Box Type', gear_encoder.classes_)
-category = st.sidebar.selectbox('Select Vehicle Category', category_encoder.classes_)
-doors_option = st.sidebar.selectbox('Select Number of Doors', doors_encoder.classes_)
-leather_interior = st.sidebar.selectbox('Does Your Car Have Leather Interior?', ['Yes', 'No'])
-color = st.sidebar.selectbox('Select Car Color', color_encoder.classes_)
-airbags_number = st.sidebar.number_input('Enter Number of Airbags:', min_value=0, value=0)
-levy = st.sidebar.number_input('Enter Levy Amount', min_value=0)
-
-
-#model_name = st.sidebar.text_input('Enter Model Name')
-#manufacturer_name = st.sidebar.text_input('Enter Manufacturer Name')
-
-
-
-
-
-
-
-
-
-if st.sidebar.button('Predict Price'):
-    # Preprocess input data
+if st.button('Predict Price'):
     input_data = pd.DataFrame({
         'Levy': [process_levy(levy)],
         'Manufacturer': [encode_value(manufacturer_encoder, manufacturer_name, 'Manufacturer')],
@@ -118,10 +121,9 @@ if st.sidebar.button('Predict Price'):
         'Age': [process_age(prod_year)]        
     })
 
-    input_data.dropna(inplace=True)  # Drop rows with NaN values
+    input_data.dropna(inplace=True)
     if input_data.empty:
         st.error("Invalid input: Some values were not recognized by the model.")
     else:
-        
         prediction = model.predict(input_data)[0]
         st.success(f'Estimated Car Price: ${prediction:,.2f}')
